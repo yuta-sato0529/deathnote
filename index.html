@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<meta charset="UTF-8">
+<title>deathnote</title>
+<script src="js/jquery-2.1.3.min.js"></script>
+<script src="./turnjs4/lib/turn.min.js"></script>
+<link rel="stylesheet" href="./css/sample_death.css">
+<link rel="stylesheet" href="./css/reset.css">
+<!-- アイコン表示 -->
+<link rel="icon" type="image/x-icon" href="./img/note.ico">
+<link href="https://use.fontawesome.com/releases/v5.0.8/css/all.css" rel="stylesheet">
+</head>
+<body>
+<header>
+<!-- deathnoteのイラストがスライドショーで設定 -->
+<div id="slide">
+    <img src="./img/shinsekai.jfif" />
+    <img src="./img/warai.jfif" />
+    <img src="./img/keikaku.jfif" />
+</div>
+
+
+<!-- タイトル -->
+<h1 class="title">
+    <img src="https://fontmeme.com/permalink/211205/09845cad215421560e393435d3c77386.png" alt="font-death-note" border="0">
+</h1>
+</header>
+<main>
+<!-- howtouseのポップアップを出す -->
+<p class="btn_p">
+    <a href="#"><img src="https://fontmeme.com/permalink/211205/4ef1ebbd68a8b811146b72f7b9917141.png" alt="font-death-note" border="0"></a>
+</p>
+
+<!-- POPupの中身 -->
+<div class="popup">
+    <div class="content">
+        <p>ルール1</p>
+        <p>&ensp;このノートに名前を書かれた人間は死ぬ｡</p>
+        <p>ルール2</p>
+        <p>&ensp;書く人物の顔が頭に入っていないと<br>&ensp;効果はない｡ゆえに同姓同名の人物に<br>&ensp;一遍に効果は得られない｡</p>
+        <p>ルール3</p>
+        <p>&ensp;名前の後に人間界単位で40秒以内に<br>&ensp;死因を書くと、その通りになる。</p>
+        <p>ルール4</p>
+        <p>&ensp;死因を書かなければ全てが心臓麻痺となる。</p>
+        <p>ルール5</p>
+        <p>&ensp;死因を書くと更に6分40秒、詳しい死の状況を<br>&ensp;記載する時間が与えられる。</p>
+        <p>ルール6</p>
+        <p>&ensp;所有者はノートの元の持ち主である死神の姿や<br>&ensp;声を認知する事ができる。</p>
+        <p>ルール7</p>
+        <p>&ensp;このノートを使った人間は天国にも<br>&ensp;地獄にも行けない。</p>
+        <button id="close" class="btn">CLOSE</button>
+    </div>
+
+</div>
+
+<!-- ノートのイメージの貼り付け-->
+    <div id="flipbook">
+        <div class="hard fliptitle">
+            <img src="https://fontmeme.com/permalink/211205/90f085c92f219c86fee923683ed74356.png" alt="font-death-note" border="0">
+        </div>
+        <div class="list2">
+            <p>\<img src="https://fontmeme.com/permalink/211205/d81f76517217ebcff8a926c6dde9f3f0.png" alt="font-death-note" border="0"></p>
+            <input type="text" id="key">
+            <p>\<img src="https://fontmeme.com/permalink/211205/bf61474b4941e36eb9073f6c3aa12917.png" alt="font-death-note" border="0"></p>
+            <textarea id="memo"></textarea>
+            <ul>
+                <li id="save"><img src="https://fontmeme.com/permalink/211205/0a2f802f0cbf550b5797b2870941d059.png" alt="font-death-note" border="0"></li>
+                <li id="clear"><img src="https://fontmeme.com/permalink/211205/2250255e3bea36e79928d4d7ba69ea27.png" alt="font-death-note" border="0"></li>
+            </ul>
+            <p class="thename"><img src="https://fontmeme.com/permalink/211205/00372452bfa378768340c11a5ce2d17d.png" alt="font-death-note" border="0"></p>
+            <input type="text" id="key2">
+            <ul>
+                <li id="removeitem"><img src="https://fontmeme.com/permalink/211205/f31eff16f5e5f90beeee39f15a92aee7.png" alt="font-death-note" border="0"></li>
+            </ul>
+        </div>
+        <div>
+        </div>
+    </div>
+
+<!-- 死亡者リスト作成 -->
+</main>
+    　<table>
+        <tr><th>The NAME of DEAD PERSON</th><td>CAUSE of DEATH</td></tr>
+    </table>
+    <table id="list">
+    <!-- ここに追加データが挿入される -->
+    </table>
+    <div class="blank"></div>
+
+<script> 
+
+// スライドショー
+$(function() {
+  $('#slide').each(function() {
+
+    let $slides = $(this).find('img');
+    let slideCount = $slides.length;
+    let currentIndex = 0;
+    
+    $slides.eq(currentIndex).fadeIn();
+    setInterval(showNextSlide, 8000);
+
+    function showNextSlide() {
+      let nextIndex = (currentIndex + 1) % slideCount;
+      
+      $slides.eq(currentIndex).fadeOut();
+      $slides.eq(nextIndex).fadeIn();
+      currentIndex = nextIndex;
+    }
+  });
+});
+
+// POPUPwindow編集
+$('.btn_p').on('click',function(){
+    $('.popup').addClass('show').fadeIn();
+});
+  
+$('#close').on('click',function(){
+    $('.popup').fadeOut();
+});
+
+//1.削除ボタン クリックイベント
+$("#save").on("click",function(){
+    const key = $("#key").val();
+    const value = $("#memo").val();
+    localStorage.setItem(key,value);
+    const html = '<tr><th>'+key+'</th><td>'+value+'</td></tr>';
+    $("#list").append(html);
+});
+
+//2.clear クリックイベント
+
+$("#clear").on("click",function(){
+    localStorage.clear();
+    $("#list").empty()
+});
+
+// 3. 救済イベント
+$("#removeitem").on("click",function(){
+    const key = $("#key2").val();
+    localStorage.removeItem(key);
+    $("#list").empty();
+    for ( let i = 0 ; i<localStorage.length; i++){
+        const key = localStorage.key(i);
+        const value = localStorage.getItem(key);
+        const html = '<tr><th>'+key+'</th><td>'+value+'</td></tr>';
+        $("#list").append(html);
+    }
+});
+
+
+//3.ページ読み込み：保存データ取得表示
+for ( let i = 0 ; i<localStorage.length; i++){
+    const key = localStorage.key(i);
+    const value = localStorage.getItem(key);
+    const html = '<tr><th>'+key+'</th><td>'+value+'</td></tr>';
+    $("#list").append(html);
+}
+$('#flipbook').turn(
+    {
+        // 自動でページをめくったときの高さ
+        elevation: 300,
+        // ページめくりのスピード(ms)
+        duration: 1000,
+        // ページをめくるときの影->有効
+        gradients: true,
+        // 自動中央揃え->無効
+        autoCenter: false,
+        // 右開きか左開きかの設定->右開き
+        direction: 'ltr',
+    }
+
+);
+
+</script>
+
+<footer>
+    <small>私的利用を目的としています</small>
+</footer>
+</body>
+</html>
